@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinity Bank - Simulador</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      background: #eef;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Infinity Bank</h2>
+
+    <label>Bandeira do Cartão:</label>
+    <select id="bandeira">
+      <option value="visa">Visa</option>
+      <option value="master">Master</option>
+      <option value="elo">Elo</option>
+    </select>
+
+    <label>Valor da Venda:</label>
+    <input type="number" id="valor" placeholder="Digite o valor">
+
+    <label>Quantidade de Parcelas:</label>
+    <input type="number" id="parcelas" placeholder="Digite as parcelas">
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <script>
+    function calcular() {
+
+      let bandeira = document.getElementById("bandeira").value;
+      let valor = Number(document.getElementById("valor").value);
+      let parcelas = Number(document.getElementById("parcelas").value);
+
+      let taxaBandeira = 0;
+
+      // SWITCH para verificar bandeira
+      switch (bandeira) {
+        case "visa":
+          taxaBandeira = valor * 0.02;
+          break;
+
+        case "master":
+          taxaBandeira = valor * 0.0185;
+          break;
+
+        case "elo":
+          taxaBandeira = valor * 0.03;
+          break;
+
+        default:
+          taxaBandeira = 0;
+      }
+
+      // Juros simples de 0.35% ao mês
+      let juros = valor * (0.0035 * parcelas);
+
+      // Taxa fixa mensal
+      let taxaMensal = parcelas * 12.50;
+
+      // Valor total
+      let total = valor + taxaBandeira + juros + taxaMensal;
+
+      // Valor de cada parcela
+      let valorParcela = total / parcelas;
+
+      // Exibir resultado
+      document.getElementById("resultado").innerHTML = `
+        <h3>Resumo da Venda</h3>
+
+        <p><strong>Taxa da Bandeira:</strong> R$ ${taxaBandeira.toFixed(2)}</p>
+
+        <p><strong>Valor dos Juros:</strong> R$ ${juros.toFixed(2)}</p>
+
+        <p><strong>Taxa Mensal:</strong> R$ ${taxaMensal.toFixed(2)}</p>
+
+        <p><strong>Valor Total:</strong> R$ ${total.toFixed(2)}</p>
+
+        <p><strong>Valor de Cada Parcela:</strong> 
+        R$ ${valorParcela.toFixed(2)}</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>

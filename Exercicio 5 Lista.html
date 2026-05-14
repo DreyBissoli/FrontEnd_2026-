@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Infinity Bank - Lista de Convidados VIP</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f6f9;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      width: 500px;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .card h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e3a5f;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .input-area button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #1e88e5;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .input-area button:hover {
+      background: #1565c0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .nome {
+      flex: 1;
+      color: #333;
+    }
+
+    .riscado {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 8px;
+    }
+
+    .acoes button {
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+    }
+
+    .concluir {
+      background: #43a047;
+    }
+
+    .editar {
+      background: #fb8c00;
+    }
+
+    .excluir {
+      background: #e53935;
+    }
+
+    .concluir:hover {
+      background: #2e7d32;
+    }
+
+    .editar:hover {
+      background: #ef6c00;
+    }
+
+    .excluir:hover {
+      background: #c62828;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Infinity Bank - Lista VIP</h1>
+
+    <div class="input-area">
+      <input type="text" id="nomeConvidado" placeholder="Digite o nome do convidado">
+      <button onclick="adicionarConvidado()">Adicionar</button>
+    </div>
+
+    <ul id="listaConvidados"></ul>
+  </div>
+
+  <script>
+    let convidados = [];
+
+    function adicionarConvidado() {
+      const input = document.getElementById("nomeConvidado");
+      const nome = input.value.trim();
+
+      if (nome === "") {
+        alert("Digite um nome válido!");
+        return;
+      }
+
+      convidados.push(nome);
+      input.value = "";
+
+      renderizarLista();
+    }
+
+    function renderizarLista() {
+      const lista = document.getElementById("listaConvidados");
+      lista.innerHTML = "";
+
+      convidados.forEach((convidado, index) => {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+          <span class="nome">${convidado}</span>
+
+          <div class="acoes">
+            <button class="concluir" onclick="concluir(${index}, this)">
+              Concluir
+            </button>
+
+            <button class="editar" onclick="editarConvidado(${index})">
+              Editar
+            </button>
+
+            <button class="excluir" onclick="excluirConvidado(${index})">
+              Excluir
+            </button>
+          </div>
+        `;
+
+        lista.appendChild(li);
+      });
+    }
+
+    function concluir(index, botao) {
+      const nome = botao.parentElement.parentElement.querySelector(".nome");
+      nome.classList.toggle("riscado");
+    }
+
+    function editarConvidado(index) {
+      const novoNome = prompt("Digite o novo nome:");
+
+      if (novoNome !== null && novoNome.trim() !== "") {
+        convidados[index] = novoNome.trim();
+        renderizarLista();
+      }
+    }
+
+    function excluirConvidado(index) {
+      convidados.splice(index, 1);
+      renderizarLista();
+    }
+  </script>
+
+</body>
+</html>

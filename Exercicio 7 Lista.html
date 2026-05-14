@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Card Guard - Infinity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #111827;
+      padding: 20px;
+      border-radius: 12px;
+      width: 420px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    .panel {
+      margin-top: 15px;
+      background: #1f2937;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .ok {
+      color: #22c55e;
+    }
+
+    .bad {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Card Guard Infinity</h2>
+
+  <input id="cardNumber" type="text" placeholder="Digite o número do cartão">
+  <button onclick="analisarCartao()">Analisar Cartão</button>
+
+  <div id="result" class="panel" style="display:none;"></div>
+</div>
+
+<script>
+function limparNumero(num) {
+  return num.replace(/[\s.]/g, '');
+}
+
+// Algoritmo de Luhn
+function validarLuhn(numero) {
+  let arr = numero.split('').reverse().map(Number);
+  let soma = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    let n = arr[i];
+
+    if (i % 2 === 1) {
+      n *= 2;
+      if (n > 9) n -= 9;
+    }
+
+    soma += n;
+  }
+
+  return soma % 10 === 0;
+}
+
+// Bandeira (simplificada)
+function detectarBandeira(num) {
+  if (num.startsWith("4")) return "Visa";
+  if (/^5[1-5]/.test(num)) return "MasterCard";
+  if (/^3[47]/.test(num)) return "American Express";
+  if (num.startsWith("6")) return "Discover";
+  return "Desconhecida";
+}
+
+// Simulação BIN/IIN
+function analisarBIN(num) {
+  const bin = num.substring(0, 8);
+
+  const setor = {
+    "4": "Setor Financeiro Geral",
+    "5": "Banco Comercial",
+    "3": "Serviços Premium / Viagens",
+    "6": "Varejo e Tecnologia"
+  };
+
+  const emissorFake = {
+    "4": "Banco Global VisaNet",
+    "5": "Master Financial Group",
+    "3": "Amex International",
+    "6": "Discover Digital Bank"
+  };
+
+  return {
+    setor: setor[num[0]] || "Indefinido",
+    banco: emissorFake[num[0]] || "Banco não identificado",
+    bin: bin
+  };
+}
+
+function analisarCartao() {
+  const input = document.getElementById("cardNumber").value;
+  const numero = limparNumero(input);
+
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+
+  if (numero.length < 13 || numero.length > 16 || /\D/.test(numero)) {
+    resultDiv.innerHTML = `<p class="bad">Número inválido: deve ter entre 13 e 16 dígitos.</p>`;
+    return;
+  }
+
+  const valido = validarLuhn(numero);
+  const bandeira = detectarBandeira(numero);
+  const info = analisarBIN(numero);
+
+  resultDiv.innerHTML = `
+    <p><strong>Status:</strong> 
+      <span class="${valido ? 'ok' : 'bad'}">
+        ${valido ? 'Válido' : 'Inválido'}
+      </span>
+    </p>
+
+    <p><strong>Bandeira:</strong> ${bandeira}</p>
+    <p><strong>IIN/BIN:</strong> ${info.bin}</p>
+    <p><strong>Setor:</strong> ${info.setor}</p>
+    <p><strong>Banco Emissor:</strong> ${info.banco}</p>
+  `;
+}
+</script>
+
+</body>
+</html>
